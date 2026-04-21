@@ -26,7 +26,26 @@ def create_account(request):
                 return HttpResponseRedirect(reverse("login"))
 
     #render page
-    return render(request, 'accounts/create_user.html', {"error": error})
+    return render(request, 'accounts/create_account.html', {"error": error})
 
-def login(request):
-    pass
+def login_view (request):
+    error = None
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        if username is None:
+            error = "Username is required."
+        elif password is None:
+            error = "Password is required."
+
+        else:
+
+            user = authenticate(username=request.POST["username"], password=request.POST["password"])
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                error = "Incorrect username or password."
+
+    return render(request, 'accounts/login.html', {"error": error})
