@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<p class="fs-1">Login</p>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+    {% endif %}
+<div class="container">
+    <form class="form-group" method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" required class="form-control" placeholder="Enter Username">
+        </div>
+        <div class="form-group my-md-3">
+            <label for="password">Password</label>
+            <input type="password" name="password" required class="form-control" placeholder="Enter Password">
+        </div>
+        <input type="submit" value="Login" class="btn btn-primary my-md-3">
+    </form>
+</div>
+{% endblock %}
