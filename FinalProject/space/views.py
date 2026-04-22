@@ -8,12 +8,17 @@ def index(request):
 
 #get all the images from the api
 def view_all(request):
-    data = api.get_all()
-
-    return render(request, 'space/view_images.html', {'data':data})
+    try:
+        data = api.get_all()
+        return render(request, 'space/view_images.html', {'data':data})
+    except:
+        return render(request, 'space/api_error.html')
 
 #get all the images from last week
 def last_week(request):
-    data = api.last_week()
-    pprint.pprint(data)
-    return render(request, 'space/view_images.html', {'data':data})
+    try:
+        data = api.last_week()
+        return render(request, 'space/view_images.html', {'data': data})
+    except:
+        return render(request, 'space/api_error.html')
+
