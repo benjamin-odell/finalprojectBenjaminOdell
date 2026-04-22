@@ -11,6 +11,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'last_week' %}">Last Week</a>
+                </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link active" href="">{{ user.get_username }}</a>
