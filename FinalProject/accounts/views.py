@@ -2,6 +2,7 @@ from django.shortcuts import render, reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def create_account(request):
@@ -49,3 +50,8 @@ def login_view (request):
                 error = "Incorrect username or password."
 
     return render(request, 'accounts/login.html', {"error": error})
+
+@login_required
+def logout_view (request):
+    logout(request)
+    return HttpResponseRedirect(reverse("index"))
