@@ -16,9 +16,11 @@ def view_all(request):
 
 #get all the images from last week
 def last_week(request):
-    try:
-        data = api.last_week()
-        return render(request, 'space/view_images.html', {'data': data})
-    except:
-        return render(request, 'space/api_error.html')
+    #try:
+    data = api.last_x(7)
+    #data = api.last_week()
+    pprint.pprint(data)
+    return render(request, 'space/view_images.html', {'data': data})
+    #except:
+     #   return render(request, 'space/api_error.html')
 

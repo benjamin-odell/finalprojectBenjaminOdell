@@ -9,7 +9,14 @@
 
           <div class="card-body">
             <h5 class="card-title">{{ d.title }}</h5>
-              <img src="{{ d.url }}" class="card-img-top object-fit-cover" style="height: 200px;" alt="{{ d.title }}">
+              {% if d.media_type == 'video' %}
+                  <iframe src="{{ d.url }}&autoplay=1&muted=1&controls=0" class="card-img-top object-fit-cover" style="height: 200px;"
+                          referrerpolicy="strict-origin-when-cross-origin">
+
+                  </iframe>
+              {% else%}
+                  <img src="{{ d.url }}" class="card-img-top object-fit-cover" style="height: 200px;" alt="{{ d.title }}">
+              {% endif %}
           </div>
 
         </div>

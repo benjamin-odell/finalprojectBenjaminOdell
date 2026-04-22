@@ -5,6 +5,8 @@ from django.db import models
 class Image(models.Model):
     date = models.DateField()
     likes = models.IntegerField(default=0)
+    data = models.JSONField(default=dict)
+    amt = models.IntegerField(default=0)
 
 class Likes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
