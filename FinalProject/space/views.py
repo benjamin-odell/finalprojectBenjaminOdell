@@ -22,6 +22,12 @@ def last_week(request):
     except:
         return render(request, 'space/api_error.html')
 
+def random_view(request):
+    data = api.get_random(10)
+    pprint.pprint(data)
+    return render(request, 'space/view_images.html', {'data': data})
+
+
 def detail(request, date):
     try:
         img = api.get_date(date)

@@ -7,4 +7,5 @@ urlpatterns = [
     #path('view_all', views.view_all, name='view_all'),
     path('last_week', views.last_week, name='last_week'),
     path('detail/<date>', views.detail, name='details'),
+    path('random', views.random_view, name='random'),
 ]

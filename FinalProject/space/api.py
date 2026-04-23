@@ -7,6 +7,7 @@ from datetime import timedelta, datetime
 from .models import Image
 import pprint
 import json
+from random import randrange
 
 load_dotenv()
 
@@ -15,25 +16,8 @@ API_KEY = os.getenv("API_KEY")
 
 url = 'https://api.nasa.gov/planetary/apod'
 
-payload = {'api_key': API_KEY, 'start_date': None, 'end_date': None, 'date': None}
+payload = {'api_key': API_KEY}
 
-
-def get_all():
-    payload['start_date'] = '1995-06-16'
-    data = requests.get(url, params=payload)
-    print(data.text)
-
-    return data
-
-def last_week():
-    date = datetime.today() - timedelta(days=7)
-    date = date.date()
-    payload['start_date'] = date
-
-    data = requests.get(url, params=payload)
-    print(data.text)
-
-    return data.json()
 
 def last_x(x):
     data = []
@@ -43,6 +27,30 @@ def last_x(x):
         d = get_date(date)
         print(type(d))
         data.append(d)
+
+    return data
+
+#get a random amount of images from the APOD api
+def get_random(x):
+    max = datetime(1995, 6,16)
+    delta = datetime.today() - max
+    delta = delta.days
+    data = []
+    days = []
+
+    for _ in range(x):#loops through the amt specified
+        while True: #loops until we find a random day not in the set
+            r = randrange(0, delta) #gets random day
+            if r not in days: #check
+                days.append(r)
+                break
+
+    for d in days:
+        date = datetime.today() - timedelta(days=d)
+        print(date)
+        date = get_date(date)
+        data.append(date)
+        pprint.pprint(data)
 
     return data
 
@@ -57,22 +65,26 @@ def get_date(date):
         #fetch image data for the date
         img = Image.objects.create(date=date)
         payload['date'] = date.date()
-        response = requests.get(url, params=payload)
-        if response.status_code == 200: #the request went through
-            img.data = response.json()
-            img.date = date.date()
-            img.save()
-        else:
-            raise
+        while True:
+            response = requests.get(url, params=payload)
+            print(response.status_code)
+            print(response.headers)
+            if response.status_code == 200: #the request went through
+                img.data = response.json()
+                img.date = date.date()
+                img.save()
+                break
     else: #the image is in the database so we can just return that info
         if(img.data == {}): #try to update image with the most up to date info
             payload['date'] = date.date()
-            response = requests.get(url, params=payload)
-            if(response.status_code == 200): #request when through
-                img.data = response.json()
-                img.amt = 0
-                img.save()
-        img.amt = img.amt + 1
-        img.save()
+            while True:
+                response = requests.get(url, params=payload)
+                print(response.status_code)
+                print(response.headers)
+                if(response.status_code == 200): #request when through
+                    img.data = response.json()
+                    img.amt = 0
+                    img.save()
+                    break
     #returns the image data
     return img.data
