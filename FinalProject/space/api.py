@@ -87,4 +87,11 @@ def get_date(date):
                     img.save()
                     break
     #returns the image data
-    return img.data
+    return img
+
+def get_dates(dates):
+    ans = []
+    for date in dates:
+        ans.append(get_date(date))
+
+    return ans

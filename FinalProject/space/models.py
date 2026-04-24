@@ -10,7 +10,7 @@ class Image(models.Model):
 
 class Likes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.DateTimeField()
+    date = models.DateTimeField()
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

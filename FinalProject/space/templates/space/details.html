@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {{ img.title }}
+    {{ img.data.title }}
 {% endblock %}
 
 {% block content %}
@@ -9,15 +9,15 @@
     <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
         <!-- Card Header with Date & Title -->
         <div class="card-header bg-transparent border-0 pt-4 px-4">
-            <h3 class="text-secondary fw-light mb-1">{{ img.date }}</h3>
+            <h3 class="text-secondary fw-light mb-1">{{ img.data.date }}</h3>
             <h1 class="display-5 fw-bold text-dark">{{ img.title }}</h1>
         </div>
 
         <!-- Media Display (Video or Image) -->
         <div class="card-body p-0">
-            {% if img.media_type == 'video' %}
+            {% if img.data.media_type == 'video' %}
                 <div class="ratio ratio-16x9">
-                    <iframe src="{{ img.url }}&muted=1&controls=1"
+                    <iframe src="{{ img.data.url }}&muted=1&controls=1"
                             class="w-100 h-100"
                             referrerpolicy="strict-origin-when-cross-origin"
                             allowfullscreen
@@ -26,8 +26,8 @@
                 </div>
             {% else %}
                 <div class="text-center bg-light p-3">
-                    <img src="{{ img.url }}"
-                         alt="{{ img.title }}"
+                    <img src="{{ img.data.url }}"
+                         alt="{{ img.data.title }}"
                          class="img-fluid rounded-3 shadow-sm"
                          style="max-height: 70vh; object-fit: contain;">
                 </div>
@@ -37,7 +37,7 @@
         <!-- Explanation Content -->
         <div class="card-body px-4 pb-4">
             <div class="mt-3">
-                <p class="lead fs-5 text-muted">{{ img.explanation }}</p>
+                <p class="lead fs-5 text-muted">{{ img.data.explanation }}</p>
             </div>
         </div>
     </div>
