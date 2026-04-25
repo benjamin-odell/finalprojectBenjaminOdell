@@ -1,77 +1,95 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {{ img.data.title }}
+    {{ img.data.title }} - Add Comment
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-        <!-- Card Header with Date & Title -->
-        <div class="card-header bg-transparent border-0 pt-4 px-4">
-            <h3 class="text-secondary fw-light mb-1">{{ img.data.date }}</h3>
+<div class="container py-4">
+    <!-- Image/Video Preview Card (matching details style) -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <!-- Date & Title -->
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <p class="text-secondary small fw-light mb-1">{{ img.data.date }}</p>
             <h1 class="display-5 fw-bold text-dark">{{ img.title }}</h1>
         </div>
 
-        <!-- Media Display (Video or Image) -->
+        <!-- Media -->
         <div class="card-body p-0">
             {% if img.data.media_type == 'video' %}
                 <div class="ratio ratio-16x9">
-                    <iframe src="{{ img.data.url }}&muted=1&controls=1"
-                            class="w-100 h-100"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen
-                            style="border:0;">
-                    </iframe>
+                    <iframe src="{{ img.data.url }}&muted=1&controls=1" allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin" style="border:0;"></iframe>
                 </div>
             {% else %}
                 <div class="text-center bg-light p-3">
-                    <img src="{{ img.data.url }}"
-                         alt="{{ img.data.title }}"
-                         class="img-fluid rounded-3 shadow-sm"
-                         style="max-height: 70vh; object-fit: contain;">
+                    <img src="{{ img.data.url }}" alt="{{ img.data.title }}"
+                         class="img-fluid rounded-3 shadow-sm" style="max-height: 70vh; object-fit: contain;">
                 </div>
             {% endif %}
         </div>
 
-        <!-- Like / Unlike row -->
-              <div class="d-flex justify-content-between align-items-center">
+        <!-- Explanation -->
+        <div class="card-body px-4 pt-4 pb-3">
+            <p class="lead fs-5 text-muted">{{ img.data.explanation }}</p>
+        </div>
+
+        <!-- Action Bar (Like / Unlike + Back to Details) -->
+        <div class="card-footer bg-light border-0 d-flex flex-wrap justify-content-between align-items-center px-4 py-3 gap-2">
+            <div class="d-flex align-items-center gap-2">
                 {% if img.id in liked %}
-                  <form method="post" action="{% url 'unlike' img.data.date %}" class="m-0">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
-                      &#10084; Unlike
-                    </button>
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                  </form>
+                    <form method="post" action="{% url 'unlike' img.data.date %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
+                            &#10084; Unlike
+                        </button>
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>
                 {% else %}
-                  <form method="post" action="{% url 'like' img.data.date %}" class="m-0">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                      &#9825; Like
-                    </button>
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                  </form>
+                    <form method="post" action="{% url 'like' img.data.date %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                            &#9825; Like
+                        </button>
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>
                 {% endif %}
                 <span class="text-muted small">{{ img.likes }} likes</span>
-              </div>
-
-        <!-- Explanation Content -->
-        <div class="card-body px-4 pb-4">
-            <div class="mt-3">
-                <p class="lead fs-5 text-muted">{{ img.data.explanation }}</p>
             </div>
+            <a href="{% url 'details' img.data.date %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                &#8592; Back to Details
+            </a>
         </div>
     </div>
-</div>
-<div class="container">
-    <!-- Add new Comment Form -->
-    <form action="{% url 'comment' img.data.date %}" method="post">
-        {% csrf_token %}
-        <label for="comment">Comment</label>
-        <input type="text" name="comment" placeholder="Add Comment Text Here">
-        <input type="hidden" name="date" value="{{ img.data.date }}">
-        <input type="submit" value="Add Comment">
-    </form>
+
+    <!-- Add Comment Card -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-transparent border-0 pt-4 px-4">
+            <h4 class="fw-semibold mb-0">Leave a Comment</h4>
+        </div>
+        <div class="card-body px-4 pb-4">
+            <!-- Error Alert -->
+            {% if error %}
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <span>{{ error }}</span>
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'comment' img.data.date %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="comment" class="form-label fw-semibold">Your Comment</label>
+                    <textarea id="comment" name="comment" class="form-control" rows="4"
+                              placeholder="Add your thoughts about this image..." required></textarea>
+                </div>
+                <input type="hidden" name="date" value="{{ img.data.date }}">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        Post Comment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

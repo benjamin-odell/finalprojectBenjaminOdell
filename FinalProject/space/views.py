@@ -34,7 +34,7 @@ def get_liked(request):
 
 #get the comments of an image
 def get_comments(img):
-    comments = Comment.objects.filter(image=img)
+    comments = Comment.objects.filter(image=img).order_by('-timestamp')
     return comments
 
 #get all the images from last week
@@ -133,7 +133,7 @@ def add_comment(request, date):
     if request.method == 'POST':
         #check for comment text
         comment_text = request.POST.get('comment')
-        if comment_text is None:
+        if comment_text is None or comment_text == '':
             error = 'Comment text is required'
         else:
             #create comment
@@ -149,6 +149,18 @@ def add_comment(request, date):
                                                   'liked': liked,
                                                   'error': error,
                                                   'comments': comments})
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = Comment.objects.get(id=comment_id)
+    date = comment.image.date
+    #verify that the logged-in user owns the comment
+    if request.user.id == comment.user.id:
+        comment.delete()
+
+    return HttpResponseRedirect(reverse('details', kwargs={'date': date}))
+
+
 
 
 

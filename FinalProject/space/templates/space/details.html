@@ -5,73 +5,131 @@
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-        <!-- Card Header with Date & Title -->
-        <div class="card-header bg-transparent border-0 pt-4 px-4">
-            <h3 class="text-secondary fw-light mb-1">{{ img.data.date }}</h3>
+<div class="container py-4">
+    <!-- Main Content Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <!-- Date & Title -->
+        <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+            <p class="text-secondary small fw-light mb-1">{{ img.data.date }}</p>
             <h1 class="display-5 fw-bold text-dark">{{ img.title }}</h1>
         </div>
 
-        <!-- Media Display (Video or Image) -->
+        <!-- Media -->
         <div class="card-body p-0">
             {% if img.data.media_type == 'video' %}
                 <div class="ratio ratio-16x9">
-                    <iframe src="{{ img.data.url }}&muted=1&controls=1"
-                            class="w-100 h-100"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen
-                            style="border:0;">
-                    </iframe>
+                    <iframe src="{{ img.data.url }}&muted=1&controls=1" allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin" style="border:0;"></iframe>
                 </div>
             {% else %}
                 <div class="text-center bg-light p-3">
-                    <img src="{{ img.data.url }}"
-                         alt="{{ img.data.title }}"
-                         class="img-fluid rounded-3 shadow-sm"
-                         style="max-height: 70vh; object-fit: contain;">
+                    <img src="{{ img.data.url }}" alt="{{ img.data.title }}"
+                         class="img-fluid rounded-3 shadow-sm" style="max-height: 70vh; object-fit: contain;">
                 </div>
             {% endif %}
         </div>
 
-        <!-- Like / Unlike row -->
-              <div class="d-flex justify-content-between align-items-center">
-                {% if img.id in liked %}
-                  <form method="post" action="{% url 'unlike' img.data.date %}" class="m-0">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
-                      &#10084; Unlike
-                    </button>
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                  </form>
-                {% else %}
-                  <form method="post" action="{% url 'like' img.data.date %}" class="m-0">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                      &#9825; Like
-                    </button>
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                  </form>
-                {% endif %}
-                <!--- Add Comment Button -->
-                <a class="btn" href="{% url 'comment' img.data.date %}">Add Comment</a>
-                <span class="text-muted small">{{ img.likes }} likes</span>
-              </div>
+        <!-- Explanation -->
+        <div class="card-body px-4 pt-4 pb-3">
+            <p class="lead fs-5 text-muted">{{ img.data.explanation }}</p>
+        </div>
 
-        <!-- Explanation Content -->
+        <!-- Action Bar (Like / Comment / Likes count) -->
+        <div class="card-footer bg-light border-0 d-flex flex-wrap justify-content-between align-items-center px-4 py-3 gap-2">
+            <div class="d-flex align-items-center gap-2">
+                {% if img.id in liked %}
+                    <form method="post" action="{% url 'unlike' img.data.date %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
+                            &#10084; Unlike
+                        </button>
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>
+                {% else %}
+                    <form method="post" action="{% url 'like' img.data.date %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                            &#9825; Like
+                        </button>
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>
+                {% endif %}
+                <span class="text-muted small">{{ img.likes }} likes</span>
+            </div>
+            <a href="{% url 'comment' img.data.date %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                + Add Comment
+            </a>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-transparent border-0 pt-4 px-4">
+            <h4 class="fw-semibold mb-0">Comments</h4>
+        </div>
         <div class="card-body px-4 pb-4">
-            <div class="mt-3">
-                <p class="lead fs-5 text-muted">{{ img.data.explanation }}</p>
+            {% if comments %}
+                <div class="list-group list-group-flush">
+                    {% for c in comments %}
+                        <div class="list-group-item border-0 px-0 py-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1 d-inline">
+                                        {{ c.user.username }}
+                                    </h6>
+                                    <small class="text-muted ms-2">{{ c.timestamp }}</small>
+                                    <p class="my-2">{{ c.comment }}</p>
+                                </div>
+                                {% if user.is_authenticated and user.id == c.user.id %}
+                                    <button class="btn btn-outline-danger btn-sm rounded-pill"
+                                            data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
+                                            data-comment-id="{{ c.id }}"
+                                            data-csrf="{{ csrf_token }}">
+                                        Delete
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">No comments yet. Be the first to add one!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this comment? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteCommentForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
-<div class="container">
-    <!-- Comments Loop -->
-    {% for c in comments %}
-        <h6>{{ c.timestamp }}</h6>
-        <h4>Posted By: {{ c.user.username }}</h4>
-        <p>{{ c.comment }}</p>
-    {% endfor %}
-</div>
+
+<!-- JavaScript to wire the modal -->
+<script>
+    const deleteModal = document.getElementById('deleteCommentModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Button that triggered the modal
+        const commentId = button.getAttribute('data-comment-id');
+        const form = document.getElementById('deleteCommentForm');
+        form.action = "{% url 'delete_comment' 0 %}".replace('0', commentId);
+    });
+</script>
+
 {% endblock %}

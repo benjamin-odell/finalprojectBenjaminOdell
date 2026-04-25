@@ -2,5 +2,52 @@
 {% block title %}Home{% endblock %}
 
 {% block header %}
-<h1>Welcome to Space View</h1>
+<div class="container py-5 text-center">
+    <h1 class="display-3 fw-bold text-dark mb-3">
+        <i class="bi bi-rocket-takeoff text-primary me-2"></i>Space View
+    </h1>
+    <p class="lead text-muted mb-4 fs-4 mx-auto" style="max-width: 700px;">
+        Your daily window to the cosmos — explore NASA’s Astronomy Picture of the Day,
+        save your favorites, and join a community of curious minds.
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a href="{% url 'last_week' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
+            <i class="bi bi-calendar-week me-2"></i> Browse the Past Week
+        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'liked_view' %}" class="btn btn-outline-danger btn-lg rounded-pill px-4">
+                <i class="bi bi-heart me-2"></i> Your Liked Images
+            </a>
+        {% else %}
+            <a href="{% url 'create_account' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                <i class="bi bi-person-plus me-2"></i> Join Free
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <p class="fs-5 text-muted">
+                View featured images or videos from NASA, complete with expert explanations.
+                <strong>Like</strong> the ones that inspire you, <strong>comment</strong> to share your thoughts,
+                and build a personal collection of your favourite moments in space.
+            </p>
+            <p class="text-muted">
+                No account is needed to browse, but signing up unlocks your personal liked gallery
+                and the ability to join the conversation.
+            </p>
+            {% if not user.is_authenticated %}
+                <p class="mt-4">
+                    <a href="{% url 'login' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="bi bi-door-open me-2"></i> Login
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
