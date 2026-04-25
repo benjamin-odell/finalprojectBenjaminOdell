@@ -54,13 +54,10 @@ def random_view(request):
 
 #prints out all the details of an image
 def detail(request, date):
-    try:
-        img = api.get_date(date)
-        liked = get_liked(request)
-        request.session['refresh'] = False
-        return render(request, 'space/details.html', {'img': img, 'liked': liked})
-    except:
-        return render(request, 'space/api_error.html')
+    img = api.get_date(date)
+    liked = get_liked(request)
+    request.session['refresh'] = False
+    return render(request, 'space/details.html', {'img': img, 'liked': liked})
 
 @login_required
 def like(request, date):

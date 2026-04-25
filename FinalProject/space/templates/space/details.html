@@ -34,6 +34,28 @@
             {% endif %}
         </div>
 
+        <!-- Like / Unlike row -->
+              <div class="d-flex justify-content-between align-items-center">
+                {% if img.id in liked %}
+                  <form method="post" action="{% url 'unlike' img.data.date %}" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
+                      &#10084; Unlike
+                    </button>
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                  </form>
+                {% else %}
+                  <form method="post" action="{% url 'like' img.data.date %}" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                      &#9825; Like
+                    </button>
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                  </form>
+                {% endif %}
+                <span class="text-muted small">{{ img.likes }} likes</span>
+              </div>
+
         <!-- Explanation Content -->
         <div class="card-body px-4 pb-4">
             <div class="mt-3">
