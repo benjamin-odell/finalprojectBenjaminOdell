@@ -8,6 +8,7 @@ urlpatterns = [
     path('last_week', views.last_week, name='last_week'),
     path('detail/<date>', views.detail, name='details'),
     path('random', views.random_view, name='random'),
+    path('random/<refresh>', views.random_view, name='random_refresh'),
     path('like/<date>', views.like, name='like'),
     path('unlike/<date>', views.unlike, name='unlike'),
     path('view_liked', views.liked_view, name='liked_view'),

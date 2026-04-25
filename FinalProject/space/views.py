@@ -1,8 +1,11 @@
+import urllib
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, redirect
 from . import api
 from .models import Likes, Image
+from urllib.parse import urlencode
 import pprint
 
 # Create your views here.
@@ -34,11 +37,19 @@ def last_week(request):
     #check if user is loged in
     liked = get_liked(request)
     print(liked)
+    request.session['refresh'] = False
     return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
 
 def random_view(request):
-    data = api.get_random(10)
+    refresh = request.session.get('refresh', False)
+    if not refresh:
+        data, dates = api.get_random(3)
+        request.session['dates'] = dates
+    else:
+        dates = request.session['dates']
+        data = api.get_dates(dates)
     liked = get_liked(request)
+    request.session['refresh'] = False
     return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
 
 #prints out all the details of an image
@@ -46,6 +57,7 @@ def detail(request, date):
     try:
         img = api.get_date(date)
         liked = get_liked(request)
+        request.session['refresh'] = False
         return render(request, 'space/details.html', {'img': img, 'liked': liked})
     except:
         return render(request, 'space/api_error.html')
@@ -67,6 +79,7 @@ def like(request, date):
         like.save()
 
     next_url = request.POST.get('next', '/')
+    request.session['refresh'] = True
     return HttpResponseRedirect(next_url)
 
 @login_required
@@ -84,6 +97,7 @@ def unlike(request, date):
         like.delete()
 
     next_url = request.POST.get('next', '/')
+    request.session['refresh'] = True
     return HttpResponseRedirect(next_url)
 
 
@@ -93,12 +107,13 @@ def liked_view(request):
     liked = Likes.objects.filter(user=request.user)
 
     dates = []
-    for like in liked:
-        dates.append(like.date)
+    for l in liked:
+        dates.append(l.date)
+
 
     data = api.get_dates(dates)
     liked = get_liked(request)
-
+    request.session['refresh'] = False
     return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
 
 

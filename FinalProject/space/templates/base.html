@@ -20,7 +20,10 @@
                 </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link active" href="">{{ user.get_username }}</a>
+                    <a class="nav-link active" href="{% url 'liked_view' %}">{{ user.get_username }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'liked_view' %}">Liked Images</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logout-modal" style="--bs-text-opacity: .9;">Logout</a>

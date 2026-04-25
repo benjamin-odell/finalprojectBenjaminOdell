@@ -6,6 +6,7 @@ import requests
 from datetime import timedelta, datetime
 from .models import Image
 import pprint
+import pytz
 import json
 from random import randrange
 
@@ -21,12 +22,19 @@ payload = {'api_key': API_KEY}
 
 def last_x(x):
     data = []
-    for t in range(x):
-        date = datetime.today() - timedelta(days=t)
-        print(date)
+    t = 0
+    while t < x:
+        date = datetime.now() - timedelta(days=t)
+        print(date.date())
         d = get_date(date)
-        print(type(d))
-        data.append(d)
+        print(d)
+        #check for 404
+        if d:
+            data.append(d)
+        else:
+            x = x+1
+
+        t = t + 1
 
     return data
 
@@ -37,6 +45,7 @@ def get_random(x):
     delta = delta.days
     data = []
     days = []
+    dates = []
 
     for _ in range(x):#loops through the amt specified
         while True: #loops until we find a random day not in the set
@@ -47,12 +56,12 @@ def get_random(x):
 
     for d in days:
         date = datetime.today() - timedelta(days=d)
-        print(date)
+        dates.append(str(date.date()))
         date = get_date(date)
         data.append(date)
         pprint.pprint(data)
 
-    return data
+    return data, dates
 
 #gets the image for a date. It first check to see if we have the image in the database, if not fetches it from the API
 def get_date(date):
@@ -74,6 +83,8 @@ def get_date(date):
                 img.date = date.date()
                 img.save()
                 break
+            if response.status_code == 404:
+                return None
     else: #the image is in the database so we can just return that info
         if(img.data == {}): #try to update image with the most up to date info
             payload['date'] = date.date()
@@ -86,6 +97,8 @@ def get_date(date):
                     img.amt = 0
                     img.save()
                     break
+                if response.status_code == 404:
+                    return None
     #returns the image data
     return img
 
