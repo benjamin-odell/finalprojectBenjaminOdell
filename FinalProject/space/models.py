@@ -14,8 +14,9 @@ class Likes(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.DateTimeField()
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
     comment = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 

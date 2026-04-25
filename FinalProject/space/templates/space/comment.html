@@ -53,8 +53,6 @@
                     <input type="hidden" name="next" value="{{ request.path }}">
                   </form>
                 {% endif %}
-                <!--- Add Comment Button -->
-                <a class="btn" href="{% url 'comment' img.data.date %}">Add Comment</a>
                 <span class="text-muted small">{{ img.likes }} likes</span>
               </div>
 
@@ -67,11 +65,13 @@
     </div>
 </div>
 <div class="container">
-    <!-- Comments Loop -->
-    {% for c in comments %}
-        <h6>{{ c.timestamp }}</h6>
-        <h4>Posted By: {{ c.user.username }}</h4>
-        <p>{{ c.comment }}</p>
-    {% endfor %}
+    <!-- Add new Comment Form -->
+    <form action="{% url 'comment' img.data.date %}" method="post">
+        {% csrf_token %}
+        <label for="comment">Comment</label>
+        <input type="text" name="comment" placeholder="Add Comment Text Here">
+        <input type="hidden" name="date" value="{{ img.data.date }}">
+        <input type="submit" value="Add Comment">
+    </form>
 </div>
 {% endblock %}

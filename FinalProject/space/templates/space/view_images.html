@@ -60,6 +60,7 @@
                     <input type="hidden" name="next" value="{{ request.path }}">
                   </form>
                 {% endif %}
+                <a class="btn" href="{% url 'comment' d.data.date %}">Add Comment</a>
                 <span class="text-muted small">{{ d.likes }} likes</span>
               </div>
             </div>

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse, redirect
 from . import api
-from .models import Likes, Image
+from .models import Likes, Image, Comment
 from urllib.parse import urlencode
 import pprint
 
@@ -20,6 +20,7 @@ def view_all(request):
     except:
         return render(request, 'space/api_error.html')
 
+#gets all of a users likes
 def get_liked(request):
     if request.user.is_authenticated:
         liked = Likes.objects.filter(user=request.user)
@@ -30,6 +31,11 @@ def get_liked(request):
         return liked_id
     else:
         return []
+
+#get the comments of an image
+def get_comments(img):
+    comments = Comment.objects.filter(image=img)
+    return comments
 
 #get all the images from last week
 def last_week(request):
@@ -56,8 +62,11 @@ def random_view(request):
 def detail(request, date):
     img = api.get_date(date)
     liked = get_liked(request)
+    comments = get_comments(img)
     request.session['refresh'] = False
-    return render(request, 'space/details.html', {'img': img, 'liked': liked})
+    return render(request, 'space/details.html', {'img': img,
+                                                  'liked': liked,
+                                                  'comments': comments})
 
 @login_required
 def like(request, date):
@@ -112,6 +121,34 @@ def liked_view(request):
     liked = get_liked(request)
     request.session['refresh'] = False
     return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
+
+#Add comment view
+@login_required
+def add_comment(request, date):
+    #check for post
+    error = None
+    liked = get_liked(request)
+    img = api.get_date(date)
+    request.session['refresh'] = False
+    if request.method == 'POST':
+        #check for comment text
+        comment_text = request.POST.get('comment')
+        if comment_text is None:
+            error = 'Comment text is required'
+        else:
+            #create comment
+            comment = Comment(user=request.user, image=img, comment=comment_text)
+            #save comment
+            comment.save()
+            #redirect to details page
+            return redirect(reverse('details', kwargs={'date': date}))
+
+    #return comment page
+    comments = get_comments(img)
+    return render(request, 'space/comment.html', {'img': img,
+                                                  'liked': liked,
+                                                  'error': error,
+                                                  'comments': comments})
 
 
 
