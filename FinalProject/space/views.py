@@ -160,6 +160,11 @@ def delete_comment(request, comment_id):
 
     return HttpResponseRedirect(reverse('details', kwargs={'date': date}))
 
+def most_liked(request):
+    data = Image.objects.all().order_by('-likes')[:12] #get 12 most liked image
+    liked = get_liked(request) #get all liked images
+
+    return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
 
 
 

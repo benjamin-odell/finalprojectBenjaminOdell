@@ -14,4 +14,5 @@ urlpatterns = [
     path('view_liked', views.liked_view, name='liked_view'),
     path('comment/<date>', views.add_comment, name='comment'),
     path('comment/delete/<int:comment_id>', views.delete_comment, name='delete_comment'),
+    path('popular', views.most_liked, name='popular'),
 ]

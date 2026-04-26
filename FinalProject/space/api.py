@@ -81,6 +81,7 @@ def get_date(date):
             if response.status_code == 200: #the request went through
                 img.data = response.json()
                 img.date = date.date()
+                img.likes = randrange(0, 1000)
                 img.save()
                 break
             if response.status_code == 404:
