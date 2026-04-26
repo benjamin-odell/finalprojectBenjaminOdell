@@ -19,6 +19,8 @@ url = 'https://api.nasa.gov/planetary/apod'
 
 payload = {'api_key': API_KEY}
 
+random_likes = True
+
 
 def last_x(x):
     data = []
@@ -81,7 +83,8 @@ def get_date(date):
             if response.status_code == 200: #the request went through
                 img.data = response.json()
                 img.date = date.date()
-                img.likes = randrange(0, 1000)
+                if random_likes:
+                    img.likes = randrange(0, 1000)
                 img.save()
                 break
             if response.status_code == 404:
