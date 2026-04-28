@@ -28,7 +28,7 @@ pip install -r requirements.txt
  
 ### Installing
  
-Make sure to CD into the notes folder with the manage.py file<br>
+Make sure to CD into the FinalProject folder with the manage.py file<br>
 Run the command
 ```angular2html
 python manage.py makemigrations
