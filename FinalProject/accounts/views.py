@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Benjamin Odell
+# Final Project
 from django.shortcuts import render, reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User

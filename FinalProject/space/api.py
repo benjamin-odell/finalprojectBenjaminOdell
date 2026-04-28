@@ -1,3 +1,6 @@
+# INF601 - Advanced Programming in Python
+# Benjamin Odell
+# Final Project
 #this file is for interaction with the NASA APOD API
 import requests
 from dotenv import load_dotenv

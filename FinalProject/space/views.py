@@ -1,3 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Benjamin Odell
+# Final Project
+
 import urllib
 
 from django.contrib.auth.decorators import login_required
