@@ -9,6 +9,7 @@
 
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for d in data %}
+        {% if d.data %}
       <div class="col">
         <div class="card h-100 shadow-sm border-0 overflow-hidden hover-lift transition">
 
@@ -67,8 +68,10 @@
 
         </div>
       </div>
+        {% endif %}
     {% endfor %}
   </div>
+
 </div>
 
 <!-- Hover lift effect -->

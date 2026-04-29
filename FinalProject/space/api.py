@@ -83,7 +83,7 @@ def get_date(date):
             response = requests.get(url, params=payload)
             print(response.status_code)
             print(response.headers)
-            if response.status_code == 200: #the request went through
+            if response.status_code == 200 and response.json() != {}: #the request went through
                 img.data = response.json()
                 img.date = date.date()
                 if random_likes:
@@ -92,20 +92,9 @@ def get_date(date):
                 break
             if response.status_code == 404:
                 return None
-    else: #the image is in the database so we can just return that info
-        if(img.data == {}): #try to update image with the most up to date info
-            payload['date'] = date.date()
-            while True:
-                response = requests.get(url, params=payload)
-                print(response.status_code)
-                print(response.headers)
-                if(response.status_code == 200): #request when through
-                    img.data = response.json()
-                    img.amt = 0
-                    img.save()
-                    break
-                if response.status_code == 404:
-                    return None
+            if response.status_code == 429:
+                raise 429
+
     #returns the image data
     return img
 

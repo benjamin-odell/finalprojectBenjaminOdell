@@ -16,14 +16,6 @@ import pprint
 def index(request):
     return render(request, 'space/index.html')
 
-#get all the images from the api
-def view_all(request):
-    try:
-        data = api.get_all()
-        return render(request, 'space/view_images.html', {'data':data})
-    except:
-        return render(request, 'space/api_error.html')
-
 #gets all of a users likes
 def get_liked(request):
     if request.user.is_authenticated:
@@ -43,24 +35,30 @@ def get_comments(img):
 
 #get all the images from last week
 def last_week(request):
-    data = api.last_x(7)
-    #check if user is loged in
-    liked = get_liked(request)
-    print(liked)
-    request.session['refresh'] = False
-    return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
+    try:
+        data = api.last_x(7)
+        #check if user is loged in
+        liked = get_liked(request)
+        print(liked)
+        request.session['refresh'] = False
+        return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
+    except:
+        return render(request,'space/api_error.html')
 
 def random_view(request):
-    refresh = request.session.get('refresh', False)
-    if not refresh:
-        data, dates = api.get_random(3)
-        request.session['dates'] = dates
-    else:
-        dates = request.session['dates']
-        data = api.get_dates(dates)
-    liked = get_liked(request)
-    request.session['refresh'] = False
-    return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
+    try:
+        refresh = request.session.get('refresh', False)
+        if not refresh:
+            data, dates = api.get_random(3)
+            request.session['dates'] = dates
+        else:
+            dates = request.session['dates']
+            data = api.get_dates(dates)
+        liked = get_liked(request)
+        request.session['refresh'] = False
+        return render(request, 'space/view_images.html', {'data': data, 'liked': liked})
+    except:
+        return render(request,'space/api_error.html')
 
 #prints out all the details of an image
 def detail(request, date):
